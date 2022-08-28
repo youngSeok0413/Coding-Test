@@ -1,0 +1,3 @@
+﻿  11047-Coin.cpp
+D:\Work\Coding-Test\11047-Coin\11047-Coin\11047-Coin.cpp(31): warning C4715: 'getCoinNum': not all control paths return a value
+  11047-Coin.vcxproj -> D:\Work\Coding-Test\11047-Coin\x64\Debug\11047-Coin.exe
