@@ -1,0 +1,3 @@
+﻿  10830.cpp
+D:\Work\Coding-Test\10830\10830\10830.cpp(14,9): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  10830.vcxproj -> D:\Work\Coding-Test\10830\x64\Debug\10830.exe
