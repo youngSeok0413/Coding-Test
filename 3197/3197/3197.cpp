@@ -2,64 +2,111 @@
 #include <string>
 #include <sstream>
 #include <queue>
+
+struct Plane {
+	char type;
+	bool visited;
+};
+
 int R, C;
+Plane plane[1501][1501] = { {{'X', false}, }, };
 std::pair<int, int> goose[2];
 std::pair<int, int> movement[4] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0}, }; // 0 = right, 1 = left, 2 = down, 3 = up
 
-bool whetherGeeseMeet(char** plane) {
+//whether geese meet each other
+bool whetherGeeseMeet() {
 	std::queue<std::pair<int, int>> passed;
+	plane[goose[0].first][goose[0].second].visited = true;
+	passed.push(goose[0]);
 
-	std::pair<int, int> nowLoc = goose[0];
-	std::pair<int, int> nextLoc[4];
-	for (int i = 0; i < 4; i++) {
-		nextLoc[i] = {nowLoc.first + movement[i].first, nowLoc.second + movement[i].second };
-		if (nextLoc[i].first > 0 && nextLoc[i].first < R 
-			&& nextLoc[i].second > 0 && nextLoc[i].second < R) {
-			if (plane[nextLoc[i].first][nextLoc[i].second] == 'L') {
-				return true; // the end
+	std::pair<int, int> next;
+	while (!passed.empty()) {
+		std::pair<int, int> now = passed.front();
+		passed.pop();
+		for (int i = 0; i < 4; i++) {
+			next = { now.first + movement[i].first, now.second + movement[i].second };
+			if (plane[next.first][next.second].type == 'L') {
+				if (!plane[next.first][next.second].visited) {
+					return true;
+				}
 			}
-			else if (plane[nextLoc[i].first][nextLoc[i].second] == '.') {
-				passed.push(nextLoc[i]);
+			else if (plane[next.first][next.second].type == '.') {
+				if (!plane[next.first][next.second].visited) {
+					plane[next.first][next.second].visited = true;
+					passed.push(next);
+				}
+			}
+		}
+ 	}
+
+	for (int i = 1; i < R+1; i++) {
+		for (int j = 1; j < C+1; j++) {
+			plane[i][j].visited = false;
+		}
+	}
+
+	return false;
+}
+
+//ice melting
+void dayPassed() {
+	std::queue<std::pair<int, int>> willBeMelted;
+	std::pair<int, int> around;
+
+	for (int i = 1; i < R + 1; i++) {
+		for (int j = 1; j < C + 1; j++) {
+			if (plane[i][j].type == 'X') {
+				for (int k = 0; k < 4; k++) {
+					around = { i + movement[k].first, j + movement[k].second };
+					if (plane[around.first][around.second].type == '.') {
+						willBeMelted.push({i, j});
+						break;
+					}
+				}
 			}
 		}
 	}
+
+	while (!willBeMelted.empty()) {
+		std::pair<int, int> toBeMelted = willBeMelted.front();
+		plane[toBeMelted.first][toBeMelted.second].type = '.';
+		willBeMelted.pop();
+	}
 }
+
 
 int main() {
 	std::cin >> R >> C;
 	std::cin.ignore();
 
-	char** plane = new char*[R];
-	for (int i = 0; i < R; i++) {
-		plane[i] = new char[C];
-	}
-
 	std::string str;
 	std::stringstream ss;
 	char input;
 	int numOfgoose = 0;
-	for (int i = 0; i < R; i++) {
+	for (int i = 1; i < R+1; i++) {
 		std::getline(std::cin, str);
 		ss << str;
-		for (int j = 0; j < C; j++) {
+		for (int j = 1; j < C+1; j++) {
 			ss >> input;
 			if (input == 'L') {
 				goose[numOfgoose] = {i, j};
 				numOfgoose++;
 			}
-			plane[i][j] = input;
+			plane[i][j].type = input;
+			plane[i][j].visited = false;
 		}
 		ss.clear();
 		str.clear();
 	}
 
 	//code here
-
-
-	for (int i = 0; i < R; i++) {
-		delete[] plane[i];
+	int day = 0;
+	while (!whetherGeeseMeet()) {
+		dayPassed();
+		day++;
 	}
-	delete[] plane;
+
+	std::cout << day;
 
 	return 0;
 }
