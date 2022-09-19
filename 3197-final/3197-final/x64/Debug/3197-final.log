@@ -1,0 +1,3 @@
+﻿  3197-final.cpp
+D:\Work\Coding-Test\3197-final\3197-final\3197-final.cpp(64,19): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  3197-final.vcxproj -> D:\Work\Coding-Test\3197-final\x64\Debug\3197-final.exe
