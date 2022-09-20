@@ -2,6 +2,8 @@
 #include <string>
 #include <sstream>
 #include <queue>
+#include <algorithm>
+#include <vector>
 
 struct Plane {
 	char type;
@@ -12,6 +14,7 @@ int R, C;
 Plane plane[1501][1501] = { {{'X', false}, }, };
 std::pair<int, int> goose[2];
 std::pair<int, int> movement[4] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0}, }; // 0 = right, 1 = left, 2 = down, 3 = up
+std::vector<std::pair<int, int>> ice;
 
 //whether geese meet each other
 bool whetherGeeseMeet() {
@@ -50,20 +53,26 @@ bool whetherGeeseMeet() {
 
 //ice melting
 void dayPassed() {
+
+	if (ice.empty())
+		return;
+
 	std::queue<std::pair<int, int>> willBeMelted;
 	std::pair<int, int> around;
 
-	for (int i = 1; i < R + 1; i++) {
-		for (int j = 1; j < C + 1; j++) {
-			if (plane[i][j].type == 'X') {
-				for (int k = 0; k < 4; k++) {
-					around = { i + movement[k].first, j + movement[k].second };
-					if (plane[around.first][around.second].type == '.') {
-						willBeMelted.push({i, j});
-						break;
-					}
-				}
+	for (int i = 0; i < ice.size();) {
+		bool plus = true;
+		for (int k = 0; k < 4; k++) {
+			around = { ice[i].first + movement[k].first, ice[i].second + movement[k].second };
+			if (plane[around.first][around.second].type == '.') {
+				willBeMelted.push(ice[i]);
+				ice.erase(ice.begin() + i);
+				plus = false;
+				break;
 			}
+		}
+		if (plus) {
+			i++;
 		}
 	}
 
@@ -89,8 +98,11 @@ int main() {
 		for (int j = 1; j < C+1; j++) {
 			ss >> input;
 			if (input == 'L') {
-				goose[numOfgoose] = {i, j};
+				goose[numOfgoose] = { i, j };
 				numOfgoose++;
+			}
+			else if (input == 'X') {
+				ice.push_back({i, j});
 			}
 			plane[i][j].type = input;
 			plane[i][j].visited = false;
