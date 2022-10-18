@@ -1,109 +1,82 @@
-#include <iostream>
 #include <vector>
+#include <iostream>
+#include <string>
 #include <queue>
+
+
+const int dx[4] = { 1,0,-1,0 };
+const int dy[4] = { 0,-1,0,1 };
 
 using namespace std;
 
-struct P {
-    int r, c;
-};
-
 int R, C;
-vector<string> Lake;
-queue<P> swanQ, waterQ, tmpswanQ, tmpwaterQ;
-int dr[4] = { 1, -1, 0, 0 }, dc[4] = { 0, 0, 1, -1 };
-bool visited[1501][1501], found = false;
+string arr[1501];
+bool visited[1501][1501];
+vector<pair<int, int>> target;
+queue<pair<int, int>> v;
 
-void input() {
-    string line;
-    P swan;
-    cin >> R >> C;
-    for (int i = 0; i < R; i++) {
-        cin >> line;
-        Lake.push_back(line);
-        for (int j = 0; j < C; j++) {
-            if (line[j] != 'X') {
-                waterQ.push({ i, j });
-            }
-            if (line[j] == 'L') {
-                swan.r = i;
-                swan.c = j;
-            }
-
-        }
-    }
-    swanQ.push(swan);
-    visited[swan.r][swan.c] = true;
-}
-
-void swanBFS() {
-    while (!swanQ.empty()) {
-        P now = swanQ.front();
-        swanQ.pop();
-
-        for (int i = 0; i < 4; i++) {
-            int nr = now.r + dr[i];
-            int nc = now.c + dc[i];
-            if (nr < 0 || nr >= R || nc < 0 || nc >= C || visited[nr][nc]) continue;
-
-            visited[nr][nc] = true;
-            if (Lake[nr][nc] == 'X') {
-                tmpswanQ.push({ nr, nc });
-            }
-            else if (Lake[nr][nc] == '.') {
-                swanQ.push({ nr, nc });
-            }
-            else if (Lake[nr][nc] == 'L') {
-                found = true;
-                break;
-            }
-        }
-    }
-}
-
-void waterBFS() {
-    while (!waterQ.empty()) {
-        P now = waterQ.front();
-        waterQ.pop();
-
-        for (int i = 0; i < 4; i++) {
-            int nr = now.r + dr[i];
-            int nc = now.c + dc[i];
-            if (nr < 0 || nr >= R || nc < 0 || nc >= C) continue;
-
-            if (Lake[nr][nc] == 'X') {
-                Lake[nr][nc] = '.';
-                tmpwaterQ.push({ nr, nc });
-            }
-        }
-    }
-}
-
-void solve() {
-    int day = 0;
-
-    while (!found) {
-        swanBFS();
-        if (found) break;
-        waterBFS();
-
-        swanQ = tmpswanQ;
-        waterQ = tmpwaterQ;
-
-        tmpswanQ = queue<P>();
-        tmpwaterQ = queue<P>();
-
-        day++;
-    }
-
-    cout << day << "\n";
-}
 
 int main() {
-    ios_base::sync_with_stdio(false); cin.tie(0);
-    input();
-    solve();
+	cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(false);
+	cin >> R >> C;
+	for (int i = 0; i < R; i++) {
+		cin >> arr[i];
+		for (int j = 0; j < C; j++) {
+			if (arr[i][j] == 'L') {
+				target.push_back({ j, i });
+				arr[i][j] = '.';
+				v.push({ j, i });
+			}
+			else if (arr[i][j] == '.') v.push({ j, i });
+		}
+	}
 
-    return 0;
+	queue<pair<int, int>> q;
+	int ans = 0;
+	q.push(target[0]);
+	visited[target[0].second][target[0].first] = true;
+	while (true) {
+		queue<pair<int, int>> next;
+		while (!q.empty()) {
+			int r = q.front().second;
+			int c = q.front().first;
+			q.pop();
+
+			for (int i = 0; i < 4; i++) {
+				int nx = dx[i] + c;
+				int ny = dy[i] + r;
+				if (nx < 0 || ny < 0 || nx >= C || ny >= R || visited[ny][nx]) continue;
+				else if (target[1] == make_pair(nx, ny)) {
+					cout << ans;
+					return 0;
+				}
+				else if (arr[ny][nx] == 'X') next.push({ nx, ny });
+				else q.push({ nx ,ny });
+				visited[ny][nx] = true;
+			}
+		}
+		q = next;
+		ans++;
+
+		int n = v.size();
+		while (n--) {
+			int r = v.front().second;
+			int c = v.front().first;
+			v.pop();
+			for (int j = 0; j < 4; j++) {
+				int nx = dx[j] + c;
+				int ny = dy[j] + r;
+				if (nx < 0 || ny < 0 || nx >= C || ny >= R) continue;
+				else if (arr[ny][nx] == 'X') {
+					v.push({ nx, ny });
+					arr[ny][nx] = '.';
+				}
+			}
+		}
+	}
+
+
+	return 0;
 }
- //from : https://hyeo-noo.tistory.com/136
+
+//√‚√≥ : https://velog.io/@asdsa2134

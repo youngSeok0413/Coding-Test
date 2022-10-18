@@ -1,7 +1,7 @@
 ﻿  pow.cpp
-D:\Work\Coding-Test\DivideNConquer-Pow Algorithm\DivideNConquer-Pow Algorithm\pow.cpp(16,19): warning C4244: 'return': conversion from '_Rep' to 'unsigned long', possible loss of data
+D:\Work\Coding-Test\DivideNConquerPowAlgorithm\DivideNConquer-Pow Algorithm\pow.cpp(16,19): warning C4244: 'return': conversion from '_Rep' to 'unsigned long', possible loss of data
           with
           [
               _Rep=__int64
           ]
-  DivideNConquer-Pow Algorithm.vcxproj -> D:\Work\Coding-Test\DivideNConquer-Pow Algorithm\x64\Debug\DivideNConquer-Pow Algorithm.exe
+  DivideNConquer-Pow Algorithm.vcxproj -> D:\Work\Coding-Test\DivideNConquerPowAlgorithm\x64\Debug\DivideNConquer-Pow Algorithm.exe
